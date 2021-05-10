@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import submit from "../utils/submit";
+import submit from "../../utils/submit";
 
 function Login() {
   const initial = {
