@@ -1,11 +1,23 @@
-import React from 'react'
+import React from "react";
+import PropTypes from "prop-types";
+import { Switch, Route } from "react-router-dom";
+import Form from "../components/categories/Form";
 
-function Categories() {
+function Categories({ match }) {
   return (
-    <div>
-      
-    </div>
-  )
+    <Switch>
+      <Route exact path={`${match.path}/create`} component={Form} />
+    </Switch>
+  );
 }
 
-export default Categories
+export default Categories;
+
+Categories.propTypes = {
+  match: PropTypes.shape({
+    path: PropTypes.string,
+    params: PropTypes.shape({
+      username: PropTypes.string,
+    }),
+  }).isRequired,
+};

@@ -44,11 +44,11 @@ function Form() {
     }
 
     if (!values.text) {
+      hasErrors = true;
       setErrors((prev) => {
-        hasErrors = true;
         return {
           ...prev,
-          title: "Text must be specified.",
+          text: "Text must be specified.",
         };
       });
     }
