@@ -19,7 +19,7 @@ function SignUp() {
     });
   };
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors(initial);
     // Client-side validation
@@ -88,7 +88,7 @@ function SignUp() {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit}>
       <label htmlFor="username">
         Username
         <input
