@@ -13,7 +13,7 @@ function Update({ id }) {
 
   return (
     <>
-      {data && <Form post={1} />}
+      {data && <Form />}
       {error && <div>Post not found.</div>}
     </>
   );
