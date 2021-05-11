@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-function Images({ setImages }) {
+function Images({ images, setImages }) {
   return (
     <label htmlFor="images">
       <input

@@ -5,8 +5,8 @@ import Login from "./routes/entry/Login";
 import SignUp from "./routes/entry/SignUp";
 import Main from "./routes/Main";
 import Posts from "./routes/posts/Posts";
-import Categories from "./routes/Categories";
-import Ingredients from "./routes/Ingredients";
+import Categories from "./routes/categories/Categories";
+import Ingredients from "./routes/ingredients/Ingredients";
 
 function App() {
   return (

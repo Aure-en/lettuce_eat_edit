@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import useFetch from "../../hooks/useFetch";
+import useFetch from "../../../hooks/useFetch";
 
-function Category({ setCategory }) {
+function Category({ categories, setCategory }) {
   const [checked, setChecked] = useState([]);
   const { data } = useFetch(`${process.env.REACT_APP_API_URL}/categories`);
 
@@ -37,6 +37,7 @@ function Category({ setCategory }) {
                 name={category._id}
                 value={category._id}
                 onChange={handleCheckbox}
+                checked={categories.includes(category._id)}
               />
             </label>
           ))}
@@ -49,9 +50,11 @@ function Category({ setCategory }) {
 export default Category;
 
 Category.propTypes = {
+  categories: PropTypes.arrayOf(PropTypes.string),
   setCategory: PropTypes.func,
 };
 
 Category.defaultProps = {
+  categories: [],
   setCategory: () => {},
 };

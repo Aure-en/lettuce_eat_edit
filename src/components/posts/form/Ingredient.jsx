@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import useFetch from "../../hooks/useFetch";
+import useFetch from "../../../hooks/useFetch";
 
-function Ingredient({ setIngredient }) {
+function Ingredient({ ingredients, setIngredient }) {
   const [checked, setChecked] = useState([]);
   const { data } = useFetch(`${process.env.REACT_APP_API_URL}/ingredients`);
 
@@ -37,6 +37,7 @@ function Ingredient({ setIngredient }) {
                 name={ingredient._id}
                 value={ingredient._id}
                 onChange={handleCheckbox}
+                checked={ingredients.includes(ingredient._id)}
               />
             </label>
           ))}
@@ -49,9 +50,11 @@ function Ingredient({ setIngredient }) {
 export default Ingredient;
 
 Ingredient.propTypes = {
+  ingredients: PropTypes.arrayOf(PropTypes.string),
   setIngredient: PropTypes.func,
 };
 
 Ingredient.defaultProps = {
+  ingredients: [],
   setIngredient: () => {},
 };

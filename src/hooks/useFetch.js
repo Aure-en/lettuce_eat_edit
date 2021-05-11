@@ -14,14 +14,17 @@ function useFetch(url) {
       try {
         // We got the correct response, and received some JSON containing the data.
         const json = JSON.parse(text);
+        console.log(json);
         setData(json);
       } catch {
         // We got an error as text.
         setError(text);
+        console.log(text);
       }
+      console.log("fetch");
       setLoading(false);
     })();
-  }, [url]);
+  }, []);
 
   return {
     data,

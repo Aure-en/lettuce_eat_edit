@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import Category from "./Category";
 import Ingredient from "./Ingredient";
 import Published from "./Published";
 import Images from "./Images";
 
-function Form() {
+function Form({ post }) {
   const initialValues = {
     title: "",
     text: "",
@@ -20,7 +21,7 @@ function Form() {
     text: "",
   };
 
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(post || initialValues);
   const [errors, setErrors] = useState(initialErrors);
 
   const handleChange = (name, value) => {
@@ -57,22 +58,45 @@ function Form() {
 
     // Create FormData object to be able to send multipart/form-data content.
     const formData = new FormData();
+    // Append string values to formData
     Object.keys(values).map((key) => {
-      if (key !== "images") formData.append(key, values[key]);
+      if (key !== "images" && key !== "ingredient" && key !== "category")
+        formData.append(key, values[key]);
     });
+
+    // Append arrays values to formData
+    for (let i = 0; i < values.ingredient.length; i += 1) {
+      formData.append("ingredient", values.ingredient[i]);
+    }
+
+    for (let i = 0; i < values.category.length; i += 1) {
+      formData.append("category", values.category[i]);
+    }
 
     for (let i = 0; i < values.images.length; i += 1) {
       formData.append("images", values.images[i]);
     }
 
     // Submit the form
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/posts`, {
-      method: "POST",
-      headers: new Headers({
-        Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
-      }),
-      body: formData,
-    });
+    let res;
+    if (!post) {
+      res = await fetch(`${process.env.REACT_APP_API_URL}/posts`, {
+        method: "POST",
+        headers: new Headers({
+          Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
+        }),
+        body: formData,
+      });
+    } else {
+      res = await fetch(`${process.env.REACT_APP_API_URL}/posts/${post._id}`, {
+        method: "PUT",
+        headers: new Headers({
+          Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
+        }),
+        body: formData,
+      });
+    }
+    console.log(await res.json());
   };
 
   return (
@@ -99,12 +123,22 @@ function Form() {
         />
       </label>
       {errors.text && <div>{errors.text}</div>}
-      <Images setImages={(value) => handleChange("images", value)} />
-      <Category setCategory={(value) => handleChange("category", value)} />
+      <Images
+        images={values.images}
+        setImages={(value) => handleChange("images", value)}
+      />
+      <Category
+        categories={values.category}
+        setCategory={(value) => handleChange("category", value)}
+      />
       <Ingredient
+        ingredients={values.ingredient}
         setIngredient={(value) => handleChange("ingredient", value)}
       />
-      <Published setPublished={(value) => handleChange("published", value)} />
+      <Published
+        published={values.published}
+        setPublished={(value) => handleChange("published", value)}
+      />
       <button type="submit">Submit</button>
     </form>
   );

@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Switch, Route } from "react-router-dom";
-import Form from "../components/categories/Form";
+import Create from "./Create";
 
 function Categories({ match }) {
   return (
     <Switch>
-      <Route exact path={`${match.path}/create`} component={Form} />
+      <Route exact path={`${match.path}/create`} component={Create} />
     </Switch>
   );
 }
