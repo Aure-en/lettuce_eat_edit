@@ -6,6 +6,8 @@ import Ingredient from "./Ingredient";
 import Published from "./Published";
 import Images from "./Images";
 
+// If a post is passed, the form will update it.
+// Otherwise, a new post document will be created.
 function Form({ post }) {
   const initialValues = {
     title: "",
@@ -78,25 +80,31 @@ function Form({ post }) {
     }
 
     // Submit the form
-    let res;
-    if (!post) {
-      res = await fetch(`${process.env.REACT_APP_API_URL}/posts`, {
-        method: "POST",
+    // If there is a post, we update it, otherwise, we create a document.
+    let res = {};
+    res = await fetch(
+      `${process.env.REACT_APP_API_URL}/posts/${post ? post._id : ""}`,
+      {
+        method: post ? "PUT" : "POST",
         headers: new Headers({
           Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
         }),
         body: formData,
-      });
-    } else {
-      res = await fetch(`${process.env.REACT_APP_API_URL}/posts/${post._id}`, {
-        method: "PUT",
-        headers: new Headers({
-          Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
-        }),
-        body: formData,
+      }
+    );
+    const json = await res.json();
+
+    // If there are errors, display them.
+    if (json.errors) {
+      json.errors.map((error) => {
+        setErrors((prev) => {
+          return {
+            ...prev,
+            [error.param]: error.msg,
+          };
+        });
       });
     }
-    console.log(await res.json());
   };
 
   return (
@@ -145,3 +153,34 @@ function Form({ post }) {
 }
 
 export default Form;
+
+Form.propTypes = {
+  post: PropTypes.shape({
+    author: PropTypes.shape({
+      username: PropTypes.string,
+      _id: PropTypes.string,
+    }),
+    title: PropTypes.string,
+    text: PropTypes.string,
+    timestamp: PropTypes.string,
+    category: PropTypes.arrayOf(PropTypes.string),
+    ingredient: PropTypes.arrayOf(PropTypes.string),
+    published: PropTypes.bool,
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        contentType: PropTypes.string,
+        data: PropTypes.shape({
+          type: PropTypes.string,
+          data: PropTypes.arrayOf(PropTypes.number),
+        }),
+        name: PropTypes.string,
+        _id: PropTypes.string,
+      })
+    ),
+    _id: PropTypes.string,
+  }),
+};
+
+Form.defaultProps = {
+  post: undefined,
+};

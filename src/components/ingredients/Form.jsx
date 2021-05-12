@@ -1,15 +1,18 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import submit from "../../utils/submit";
 
-function Form() {
-  const [ingredient, setIngredient] = useState("");
+// If an ingredient is passed, the form will update it.
+// Otherwise, a new ingredient document will be created.
+function Form({ ingredient }) {
+  const [name, setName] = useState((ingredient && ingredient.name) || "");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
-    if (!ingredient) {
+    if (!name) {
       setError("Name must be specified.");
       return;
     }
@@ -18,14 +21,21 @@ function Form() {
     - If successful, return the ingredient details.
     - If login failed, return { errors: [] }
     */
-    const response = await submit(
-      `${process.env.REACT_APP_API_URL}/ingredients`,
-      { name: ingredient }
-    );
+
+    let res;
+    if (!ingredient) {
+      res = await submit(`${process.env.REACT_APP_API_URL}/ingredients`, { name });
+    } else {
+      res = await submit(
+        `${process.env.REACT_APP_API_URL}/ingredients/${ingredient._id}`,
+        { name },
+        "PUT"
+      );
+    }
 
     // If there are form errors, display them.
-    if (response.errors) {
-      setError(response.errors[0]);
+    if (res.errors) {
+      setError(res.errors[0]);
     }
 
     // Ingredient was created.
@@ -38,8 +48,8 @@ function Form() {
         <textarea
           id="name"
           name="name"
-          value={ingredient}
-          onChange={(e) => setIngredient(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </label>
       {error && <div>{error}</div>}
@@ -49,3 +59,14 @@ function Form() {
 }
 
 export default Form;
+
+Form.propTypes = {
+  ingredient: PropTypes.shape({
+    name: PropTypes.string,
+    _id: PropTypes.string,
+  }),
+};
+
+Form.defaultProps = {
+  ingredient: undefined,
+};

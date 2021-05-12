@@ -1,6 +1,6 @@
-const submit = async (url, fields) => {
+const submit = async (url, fields, method = "POST") => {
   const res = await fetch(url, {
-    method: "POST",
+    method,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
       "Content-Type": "application/json",
