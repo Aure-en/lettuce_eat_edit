@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Form from "../../components/posts/form/Form";
+import Delete from "../../components/posts/Delete";
 import useFetch from "../../hooks/useFetch";
 
 function Update({ id }) {
@@ -13,7 +14,12 @@ function Update({ id }) {
 
   return (
     <>
-      {data && <Form post={data} />}
+      {data && (
+        <>
+          <Form post={data} />
+          <Delete post={data} />
+        </>
+      )}
       {error && <div>Post not found.</div>}
     </>
   );

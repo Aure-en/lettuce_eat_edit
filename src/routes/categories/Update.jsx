@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Form from "../../components/categories/Form";
+import Delete from "../../components/categories/Delete";
 import useFetch from "../../hooks/useFetch";
 
 function Update({ id }) {
@@ -13,7 +14,12 @@ function Update({ id }) {
 
   return (
     <>
-      {data && <Form category={data} />}
+      {data && (
+        <>
+          <Form category={data} />
+          <Delete category={data} />
+        </>
+      )}
       {error && <div>Category not found.</div>}
     </>
   );

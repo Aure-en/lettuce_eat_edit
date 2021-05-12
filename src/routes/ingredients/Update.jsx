@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Form from "../../components/ingredients/Form";
+import Delete from "../../components/ingredients/Delete";
 import useFetch from "../../hooks/useFetch";
 
 function Update({ id }) {
@@ -13,7 +14,12 @@ function Update({ id }) {
   );
   return (
     <>
-      {data && <Form ingredient={data} />}
+      {data && (
+        <>
+          <Form ingredient={data} />
+          <Delete ingredient={data} />
+        </>
+      )}
       {error && <div>Ingredient not found.</div>}
     </>
   );
