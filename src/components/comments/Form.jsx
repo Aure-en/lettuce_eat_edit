@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import submit from "../../utils/submit";
 
-function Form({ postId, parentId }) {
+// If a comment is passed, the form will update it.
+// Otherwise, a new comment document will be created.
+function Form({ postId, parentId, comment }) {
   const [values, setValues] = useState({
-    username: "",
-    content: "",
+    username: (comment && comment.username) || "",
+    content: (comment && comment.content) || "",
   });
 
   const [errors, setErrors] = useState({
@@ -18,24 +21,46 @@ function Form({ postId, parentId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch(
-      `${process.env.REACT_APP_API_URL}/posts/${postId}/comments/${
-        parentId ? `${parentId}` : ""
-      }`,
-      {
-        method: "POST",
-        headers: new Headers({
-          Authorization: `Bearer ${localStorage.getItem("JWTToken")}`,
-          "Content-Type": "application/json",
-        }),
-        body: JSON.stringify({
-          username: values.username,
-          content: values.content,
-        }),
+    setErrors({
+      username: "",
+      content: "",
+    });
+
+    // Client-side validation
+    let hasErrors = false;
+    Object.keys(values).map((key) => {
+      if (!values[key]) {
+        hasErrors = true;
+        setErrors((prev) => {
+          return {
+            ...prev,
+            [key]: `${key} must be specified.`,
+          };
+        });
       }
-    );
-    const json = await res.json();
-    console.log(json);
+    });
+
+    if (hasErrors) return;
+
+    // Send form to back
+    let res;
+
+    // Updating a comment
+    if (comment) {
+      res = await submit(
+        `${process.env.REACT_APP_API_URL}/posts/${postId}/comments/${comment._id}`,
+        values,
+        "PUT"
+      );
+    } else {
+      res = await submit(
+        `${process.env.REACT_APP_API_URL}/posts/${postId}/comments/${
+          parentId ? `${parentId}` : ""
+        }`,
+        values
+      );
+    }
+    console.log(res);
   };
 
   return (
@@ -50,6 +75,7 @@ function Form({ postId, parentId }) {
           onChange={(e) => handleChange("username", e.target.value)}
         />
       </label>
+      {errors.username && <div>{errors.username}</div>}
 
       <label htmlFor="content">
         Comment
@@ -60,6 +86,7 @@ function Form({ postId, parentId }) {
           onChange={(e) => handleChange("content", e.target.value)}
         />
       </label>
+      {errors.content && <div>{errors.content}</div>}
 
       <button type="submit">Comment</button>
     </form>
